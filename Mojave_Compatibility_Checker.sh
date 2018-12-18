@@ -31,12 +31,12 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # This script was designed to be used as an Extension Attribute to ensure specific
-# requirements have been met to deploy macOS High Sierra.
+# requirements have been met to deploy macOS Mojave.
 # 
 # General Requirements:
-# 	- OS X 10.7.5 or later
+# 	- OS X 10.8 or later
 # 	- 4GB of memory (Apple says 2GB for 10.12, I prefer having a minimum of 4GB)
-# 	- 15GB of available storage (Apple says 8.8GB for 10.12, I prefer more space)
+# 	- 15GB of available storage (Apple says 12.5GB, but 15 is a nice round number)
 # 
 # These last 2 requirements can be modified in the first 2 variables (MINIMUMRAM
 # and MINIMUMSPACE).
@@ -45,19 +45,23 @@
 # 
 # 
 # Mac Hardware Requirements and equivalent as minimum Model Identifier
-# 	- MacBook (Late 2009 or newer), ie MacBook6,1
-# 	- MacBook Pro (Mid 2010 or newer), ie MacBookPro7,1
-# 	- MacBook Air (Late 2010 or newer), ie MacBookAir3,1
-# 	- Mac mini (Mid 2010 or newer), ie Macmini4,1
-# 	- iMac (Late 2009 or newer), ie iMac10,1
-# 	- Mac Pro (Mid 2010 or newer), ie MacPro5,1
+# 	- MacBook (Early 2015 or newer), i.e. MacBook8,1
+# 	- MacBook Air (Mid 2012 or newer), i.e. MacBookAir5,1
+# 	- MacBook Pro (Mid 2012 or newer), i.e. MacBookPro9,2
+# 	- Mac mini (Late 2012 or newer), i.e. Macmini6,1
+# 	- iMac (Late 2012 or newer), i.e. iMac13,1
+# 	- iMac Pro (2017), i.e. iMac13,1
+# 	- Mac Pro (Mid 2010 or newer), i.e. MacPro5,1
 #
 # Default compatibility is set to False if no test pass (variable COMPATIBILITY)
 #
 # Written by: Laurent Pertois | Senior Professional Services Engineer | Jamf
 #
-# Created On: 2017-08-27
+# Created On: 2017-08-27 (High Sierra compatibility)
 # Updated On: 2017-08-31
+#
+# Updated to check for Mojave compatiblity 2018-12-18
+# Updated by: Isaac Nelson | The Church of Jesus Christ of Latter-day Saints
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -78,12 +82,12 @@ COMPATIBILITY="False"
 ############### Let's go!
 #########################################################################################
 
-# Checks minimum version of the OS before upgrade (10.7.5)
+# Checks minimum version of the OS before upgrade (10.8)
 OSVERSIONMAJOR=$(sw_vers -productVersion | awk -F"." '{ print $2 }')
 OSVERSIONMINOR=$(sw_vers -productVersion | awk -F"." '{ print $3 }')
 
 # Checks if computer meets pre-requisites for High Sierra
-if [[ "$OSVERSIONMAJOR" -ge 8 && "$OSVERSIONMAJOR" -lt 13 || "$OSVERSIONMAJOR" -eq 7 && "OSVERSIONMINOR" -eq 5 ]]; then
+if [[ "$OSVERSIONMAJOR" -ge 8 && "$OSVERSIONMAJOR" -lt 14 ]]; then
 	
 	# Transform GB into Bytes
 	GIGABYTES=$((1024 * 1024 * 1024))
@@ -102,17 +106,17 @@ if [[ "$OSVERSIONMAJOR" -ge 8 && "$OSVERSIONMAJOR" -lt 13 || "$OSVERSIONMAJOR" -
 	FREESPACE=$(diskutil info / | awk -F'[()]' '/Free Space|Available Space/ {print $2}' | sed -e 's/\ Bytes//')
 	
 	# Checks if computer meets pre-requisites for High Sierra
-	if [[ "$MODELNAME" == "iMac" && "$MODELVERSION" -ge 10 && "$MEMORYINSTALLED" -ge "$MINIMUMRAM" && "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then
+	if [[ "$MODELNAME" == "iMac" && "$MODELVERSION" -ge 13 && "$MEMORYINSTALLED" -ge "$MINIMUMRAM" && "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then
 		COMPATIBILITY="True"
-	elif [[ "$MODELNAME" == "Macmini" && "$MODELVERSION" -ge 4 && "$MEMORYINSTALLED" -ge "$MINIMUMRAM" && "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then
+	elif [[ "$MODELNAME" == "Macmini" && "$MODELVERSION" -ge 6 && "$MEMORYINSTALLED" -ge "$MINIMUMRAM" && "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then
 		COMPATIBILITY="True"
 	elif [[ "$MODELNAME" == "MacPro" && "$MODELVERSION" -ge 5 && "$MEMORYINSTALLED" -ge "$MINIMUMRAM" && "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then
 	    COMPATIBILITY="True"
-	elif [[ "$MODELNAME" == "MacBook" && "$MODELVERSION" -ge 6 && "$MEMORYINSTALLED" -ge "$MINIMUMRAM" && "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then
+	elif [[ "$MODELNAME" == "MacBook" && "$MODELVERSION" -ge 8 && "$MEMORYINSTALLED" -ge "$MINIMUMRAM" && "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then
 	    COMPATIBILITY="True"
-	elif [[ "$MODELNAME" == "MacBookAir" && "$MODELVERSION" -ge 3 && "$MEMORYINSTALLED" -ge "$MINIMUMRAM" && "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then
+	elif [[ "$MODELNAME" == "MacBookAir" && "$MODELVERSION" -ge 5 && "$MEMORYINSTALLED" -ge "$MINIMUMRAM" && "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then
 	    COMPATIBILITY="True"
-	elif [[ "$MODELNAME" == "MacBookPro" && "$MODELVERSION" -ge 7 && "$MEMORYINSTALLED" -ge "$MINIMUMRAM" && "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then
+	elif [[ "$MODELNAME" == "MacBookPro" && "$MODELVERSION" -ge 9 && "$MEMORYINSTALLED" -ge "$MINIMUMRAM" && "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then
 	    COMPATIBILITY="True"
 	fi
 
