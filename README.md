@@ -20,7 +20,7 @@ These last 2 requirements can be modified in the first 2 variables (`MINIMUMRAM`
 	- MacBook Pro (Mid 2012 or newer), i.e. MacBookPro9,2
 	- Mac mini (Late 2012 or newer), i.e. Macmini6,1
 	- iMac (Late 2012 or newer), i.e. iMac13,1
-	- iMac Pro (2017), i.e. iMac13,1
+	- iMac Pro (2017), i.e. iMacPro1,1
 	- Mac Pro (Mid 2010 or newer), i.e. MacPro5,1
 
 Default compatibility is set to False if no test pass (variable `COMPATIBILITY`)
