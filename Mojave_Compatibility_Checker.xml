@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><extensionAttribute>
-<displayName>MacOS High Sierra Compatibility</displayName>
-<description>Test compatibility of computers with macOS High Sierra</description>
+<displayName>macOS Mojave Compatibility</displayName>
+<description>Test compatibility of computers with macOS Mojave</description>
 <dataType>string</dataType>
 <scriptContentsMac>#!/bin/bash&#13;
 &#13;
@@ -35,12 +35,12 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #&#13;
 #&#13;
 # This script was designed to be used as an Extension Attribute to ensure specific&#13;
-# requirements have been met to deploy macOS High Sierra.&#13;
+# requirements have been met to deploy macOS Mojave.&#13;
 # &#13;
 # General Requirements:&#13;
-# 	- OS X 10.7.5 or later&#13;
+# 	- OS X 10.8 or later&#13;
 # 	- 4GB of memory (Apple says 2GB for 10.12, I prefer having a minimum of 4GB)&#13;
-# 	- 15GB of available storage (Apple says 8.8GB for 10.12, I prefer more space)&#13;
+# 	- 15GB of available storage (Apple says 12.5GB, but 15 is a nice round number)&#13;
 # &#13;
 # These last 2 requirements can be modified in the first 2 variables (MINIMUMRAM&#13;
 # and MINIMUMSPACE).&#13;
@@ -49,19 +49,23 @@
 # &#13;
 # &#13;
 # Mac Hardware Requirements and equivalent as minimum Model Identifier&#13;
-# 	- MacBook (Late 2009 or newer), ie MacBook6,1&#13;
-# 	- MacBook Pro (Mid 2010 or newer), ie MacBookPro7,1&#13;
-# 	- MacBook Air (Late 2010 or newer), ie MacBookAir3,1&#13;
-# 	- Mac mini (Mid 2010 or newer), ie Macmini4,1&#13;
-# 	- iMac (Late 2009 or newer), ie iMac10,1&#13;
-# 	- Mac Pro (Mid 2010 or newer), ie MacPro5,1&#13;
+# 	- MacBook (Early 2015 or newer), i.e. MacBook8,1&#13;
+# 	- MacBook Air (Mid 2012 or newer), i.e. MacBookAir5,1&#13;
+# 	- MacBook Pro (Mid 2012 or newer), i.e. MacBookPro9,2&#13;
+# 	- Mac mini (Late 2012 or newer), i.e. Macmini6,1&#13;
+# 	- iMac (Late 2012 or newer), i.e. iMac13,1&#13;
+# 	- iMac Pro (2017), i.e. iMac13,1&#13;
+# 	- Mac Pro (Mid 2010 or newer), i.e. MacPro5,1&#13;
 #&#13;
 # Default compatibility is set to False if no test pass (variable COMPATIBILITY)&#13;
 #&#13;
 # Written by: Laurent Pertois | Senior Professional Services Engineer | Jamf&#13;
 #&#13;
-# Created On: 2017-08-27&#13;
+# Created On: 2017-08-27 (High Sierra compatibility)&#13;
 # Updated On: 2017-08-31&#13;
+#&#13;
+# Updated to check for Mojave compatiblity 2018-12-18&#13;
+# Updated by: Isaac Nelson | The Church of Jesus Christ of Latter-day Saints&#13;
 #&#13;
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #&#13;
 &#13;
@@ -82,12 +86,12 @@ COMPATIBILITY="False"&#13;
 ############### Let's go!&#13;
 #########################################################################################&#13;
 &#13;
-# Checks minimum version of the OS before upgrade (10.7.5)&#13;
+# Checks minimum version of the OS before upgrade (10.8)&#13;
 OSVERSIONMAJOR=$(sw_vers -productVersion | awk -F"." '{ print $2 }')&#13;
 OSVERSIONMINOR=$(sw_vers -productVersion | awk -F"." '{ print $3 }')&#13;
 &#13;
-# Checks if computer meets pre-requisites for High Sierra&#13;
-if [[ "$OSVERSIONMAJOR" -ge 8 &amp;&amp; "$OSVERSIONMAJOR" -lt 13 || "$OSVERSIONMAJOR" -eq 7 &amp;&amp; "OSVERSIONMINOR" -eq 5 ]]; then&#13;
+# Checks if computer meets pre-requisites for Mojave&#13;
+if [[ "$OSVERSIONMAJOR" -ge 8 &amp;&amp; "$OSVERSIONMAJOR" -lt 14 ]]; then&#13;
 	&#13;
 	# Transform GB into Bytes&#13;
 	GIGABYTES=$((1024 * 1024 * 1024))&#13;
@@ -105,18 +109,18 @@ if [[ "$OSVERSIONMAJOR" -ge 8 &amp;&amp; "$OSVERSIONMAJOR" -lt 13 || "$OSVERSION
 	# Gets free space on the boot drive&#13;
 	FREESPACE=$(diskutil info / | awk -F'[()]' '/Free Space|Available Space/ {print $2}' | sed -e 's/\ Bytes//')&#13;
 	&#13;
-	# Checks if computer meets pre-requisites for High Sierra&#13;
-	if [[ "$MODELNAME" == "iMac" &amp;&amp; "$MODELVERSION" -ge 10 &amp;&amp; "$MEMORYINSTALLED" -ge "$MINIMUMRAM" &amp;&amp; "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then&#13;
+	# Checks if computer meets pre-requisites for Mojave&#13;
+	if [[ "$MODELNAME" == "iMac" &amp;&amp; "$MODELVERSION" -ge 13 &amp;&amp; "$MEMORYINSTALLED" -ge "$MINIMUMRAM" &amp;&amp; "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then&#13;
 		COMPATIBILITY="True"&#13;
-	elif [[ "$MODELNAME" == "Macmini" &amp;&amp; "$MODELVERSION" -ge 4 &amp;&amp; "$MEMORYINSTALLED" -ge "$MINIMUMRAM" &amp;&amp; "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then&#13;
+	elif [[ "$MODELNAME" == "Macmini" &amp;&amp; "$MODELVERSION" -ge 6 &amp;&amp; "$MEMORYINSTALLED" -ge "$MINIMUMRAM" &amp;&amp; "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then&#13;
 		COMPATIBILITY="True"&#13;
 	elif [[ "$MODELNAME" == "MacPro" &amp;&amp; "$MODELVERSION" -ge 5 &amp;&amp; "$MEMORYINSTALLED" -ge "$MINIMUMRAM" &amp;&amp; "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then&#13;
 	    COMPATIBILITY="True"&#13;
-	elif [[ "$MODELNAME" == "MacBook" &amp;&amp; "$MODELVERSION" -ge 6 &amp;&amp; "$MEMORYINSTALLED" -ge "$MINIMUMRAM" &amp;&amp; "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then&#13;
+	elif [[ "$MODELNAME" == "MacBook" &amp;&amp; "$MODELVERSION" -ge 8 &amp;&amp; "$MEMORYINSTALLED" -ge "$MINIMUMRAM" &amp;&amp; "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then&#13;
 	    COMPATIBILITY="True"&#13;
-	elif [[ "$MODELNAME" == "MacBookAir" &amp;&amp; "$MODELVERSION" -ge 3 &amp;&amp; "$MEMORYINSTALLED" -ge "$MINIMUMRAM" &amp;&amp; "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then&#13;
+	elif [[ "$MODELNAME" == "MacBookAir" &amp;&amp; "$MODELVERSION" -ge 5 &amp;&amp; "$MEMORYINSTALLED" -ge "$MINIMUMRAM" &amp;&amp; "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then&#13;
 	    COMPATIBILITY="True"&#13;
-	elif [[ "$MODELNAME" == "MacBookPro" &amp;&amp; "$MODELVERSION" -ge 7 &amp;&amp; "$MEMORYINSTALLED" -ge "$MINIMUMRAM" &amp;&amp; "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then&#13;
+	elif [[ "$MODELNAME" == "MacBookPro" &amp;&amp; "$MODELVERSION" -ge 9 &amp;&amp; "$MEMORYINSTALLED" -ge "$MINIMUMRAM" &amp;&amp; "$FREESPACE" -ge "$MINIMUMSPACE" ]]; then&#13;
 	    COMPATIBILITY="True"&#13;
 	fi&#13;
 &#13;
@@ -125,6 +129,6 @@ if [[ "$OSVERSIONMAJOR" -ge 8 &amp;&amp; "$OSVERSIONMAJOR" -lt 13 || "$OSVERSION
 else&#13;
 	echo "&lt;result&gt;$COMPATIBILITY&lt;/result&gt;"&#13;
 	exit $?&#13;
-fi</scriptContentsMac>
-<scriptContentsWindows/>
+fi&#13;
+</scriptContentsMac>
 </extensionAttribute>
